@@ -45,6 +45,7 @@ class NotificationCustomRepositoryImpl(
         userId: String,
         method: List<String>,
         filters: List<FilterGQL>?,
+        dataFilters: Map<String, Any>?,
         pageSize: Int,
         pageNumber: Int,
     ): NotificationsResultGQL {
@@ -53,6 +54,7 @@ class NotificationCustomRepositoryImpl(
             Criteria("recipient.userId").isEqualTo(userId),
             Criteria("recipient.method").`in`(method),
         )
+
         if (filters != null) {
             val readMarked = filters.contains(FilterGQL.READ_MARKED)
             val readUnmarked = filters.contains(FilterGQL.READ_UNMARKED)
@@ -66,6 +68,10 @@ class NotificationCustomRepositoryImpl(
             if (unsent) {
                 criteria = criteria.and("sent").isEqualTo(false)
             }
+        }
+
+        dataFilters?.forEach { k, v ->
+            criteria = criteria.and("data.${k}").isEqualTo(v)
         }
 
         val basicAggregation = Aggregation.newAggregation(

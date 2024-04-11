@@ -76,13 +76,14 @@ class NotificationResolver(
     fun notificationsGet(
         context: GraphQLContext,
         @Argument("filters") filters: List<FilterGQL>?,
+        @Argument("dataFilters") dataFilters: Map<String, Any>?,
         @Argument("pageSize") pageSize: Int,
         @Argument("pageNumber") pageNumber: Int,
     ): NotificationsResultGQL {
         val userAuthentication = context.get<UserAuthentication?>(UserAuthentication.GRAPHQL_CONTEXT_KEY)
             ?: throw UnauthorizedException()
 
-        return notyNotificationService.getPagedNotifications(userAuthentication, listOf(NotyMethod.NOTIFICATION), filters, pageSize, pageNumber.coerceAtLeast(1))
+        return notyNotificationService.getPagedNotifications(userAuthentication, listOf(NotyMethod.NOTIFICATION), filters, dataFilters, pageSize, pageNumber.coerceAtLeast(1))
     }
 
     @MutationMapping("notificationMarkRead")

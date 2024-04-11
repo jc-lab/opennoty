@@ -19,7 +19,8 @@ type NotificationsResultGQL {
 type Query {
     # filter 가 없으면 이는 [READ_MARKED, READ_UNMARKED] 와 같음
     # pageNumber : Start from 1
-    notificationsGet(filters: [FilterGQL!], pageSize: Int!, pageNumber: Int!): NotificationsResultGQL!
+    # dataFilters : e.g. '{"domain": "admin"}'. key is in "data"
+    notificationsGet(filters: [FilterGQL!], dataFilters: JSON, pageSize: Int!, pageNumber: Int!): NotificationsResultGQL!
 }
 
 type Subscription {

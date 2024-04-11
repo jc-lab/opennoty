@@ -7,5 +7,5 @@ import org.bson.types.ObjectId
 
 interface NotificationCustomRepository {
     fun findNotificationWithData(tenantId: String, notificationId: ObjectId): NotificationDTO?
-    fun getPagedNotifications(tenantId: String, userId: String, method: List<String>, filters: List<FilterGQL>?, pageSize: Int, pageNumber: Int): NotificationsResultGQL
+    fun getPagedNotifications(tenantId: String, userId: String, method: List<String>, filters: List<FilterGQL>?, dataFilters: Map<String, Any>?, pageSize: Int, pageNumber: Int): NotificationsResultGQL
 }

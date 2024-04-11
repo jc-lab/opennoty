@@ -13,7 +13,7 @@ interface EntityRepository {
     fun getPublish(tenantId: String, publishId: String): Publish?
     fun getNotification(tenantId: String, notificationId: String): Notification?
     fun getNotificationWithData(tenantId: String, notificationId: String): NotificationWithData?
-    fun getPagedNotifications(userAuthentication: UserAuthentication, method: List<String>, filters: List<FilterGQL>?, pageSize: Int, pageNumber: Int): NotificationsResultGQL
+    fun getPagedNotifications(userAuthentication: UserAuthentication, method: List<String>, filters: List<FilterGQL>?, dataFilters: Map<String, Any>?, pageSize: Int, pageNumber: Int): NotificationsResultGQL
     fun savePublish(publish: Publish): Publish
     fun saveNotification(notification: Notification): Notification
     fun getNotificationsByPublish(publish: Publish): List<Notification>

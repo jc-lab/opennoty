@@ -70,12 +70,13 @@ class NotyDefaultMongodbEntityRepository(
         return notificationRepository.findNotificationWithData(tenantId, ObjectId(notificationId))
     }
 
-    override fun getPagedNotifications(userAuthentication: UserAuthentication, method: List<String>, filters: List<FilterGQL>?, pageSize: Int, pageNumber: Int): NotificationsResultGQL {
+    override fun getPagedNotifications(userAuthentication: UserAuthentication, method: List<String>, filters: List<FilterGQL>?, dataFilters: Map<String, Any>?, pageSize: Int, pageNumber: Int): NotificationsResultGQL {
         return notificationRepository.getPagedNotifications(
             userAuthentication.tenantId,
             userAuthentication.userId,
             method,
             filters,
+            dataFilters,
             pageSize,
             pageNumber
         )

@@ -16,10 +16,11 @@ class NotyNotificationService(
         userAuthentication: UserAuthentication,
         method: List<NotyMethod>,
         filters: List<FilterGQL>?,
+        dataFilters: Map<String, Any>?,
         pageSize: Int,
         pageNumber: Int,
     ): NotificationsResultGQL {
-        return notyServer.entityRepository.getPagedNotifications(userAuthentication, method.map { it.value }, filters, pageSize, pageNumber)
+        return notyServer.entityRepository.getPagedNotifications(userAuthentication, method.map { it.value }, filters, dataFilters, pageSize, pageNumber)
     }
 
     fun markRead(
