@@ -24,6 +24,7 @@ jobs:
           gpg --list-secret-keys --keyid-format LONG
       - name: Build
         run: |
+          cd server
           chmod +x gradlew
           ./gradlew build test
       - id: publish-to-central
@@ -32,5 +33,6 @@ jobs:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
         run: |
+          cd server
           chmod +x gradlew
           ./gradlew :server-interface:publish :spring-server:publish -Psigning.gnupg.keyName=243D34DB9C8DC5809A818BF105BDFD8B158B5001 -Psigning.gnupg.executable=gpg -PossrhUsername=${{ secrets.OSSRH_TOKEN_USERNAME }} -PossrhPassword=${{ secrets.OSSRH_TOKEN_PASSWORD }} -Psigning.gnupg.passphrase=${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }}

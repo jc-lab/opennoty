@@ -10,5 +10,7 @@ jobs:
           distribution: 'zulu'
           java-version: '17'
           cache: 'gradle'
-      - run: chmod +x ./gradlew
-      - run: ./gradlew :build :test
+      - run: |
+          cd server
+          chmod +x gradlew
+          ./gradlew :build :test
