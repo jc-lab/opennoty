@@ -10,6 +10,17 @@ repositories {
     mavenCentral()
 }
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+    withJavadocJar()
+    withSourcesJar()
+}
+
+tasks.withType<JavaCompile>() {
+    options.encoding = "UTF-8"
+}
+
 dependencies {
     compileOnly("org.springframework.data:spring-data-mongodb:4.2.4")
     compileOnly("io.github.openfeign:feign-core:13.2.1")
