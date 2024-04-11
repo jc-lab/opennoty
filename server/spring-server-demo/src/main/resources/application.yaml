@@ -1,0 +1,42 @@
+spring:
+  application.name: opennoty-spring-server
+  data:
+    mongodb:
+      auto-index-creation: true
+  graphql:
+    path: /api/graphql
+    schema:
+      locations:
+        - classpath:graphql/**
+      printer:
+        enabled: true
+    websocket:
+      path: /api/graphql/ws
+    graphiql:
+      path: /api/graphql
+      enabled: true
+  mail:
+    host: "mail.your.domain.com"
+    port: 587
+    username: "noreply@your.domain.com"
+    password: "password"
+    protocol: "smtp"
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls.enabled: true
+
+management:
+  endpoints:
+    web:
+      base-path: /_/
+
+nats:
+  spring:
+    server: "nats://127.0.0.1:4222"
+
+noty:
+  server:
+    database: mongodb
+    mailFrom: "\"No Reply\" <noreply@your.domain.com>"

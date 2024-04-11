@@ -1,0 +1,33 @@
+enum FilterGQL {
+    READ_MARKED # 읽은 것만 가져오기
+    READ_UNMARKED # 읽지 않은 것만 가져오기
+}
+
+type NotificationGQL {
+    id: String!
+    readMarked: Boolean!
+    data: JSON!
+    consumableData: JSON
+    secureData: String # Null or JWE
+}
+
+type NotificationsResultGQL {
+    totalCount: Int! # 해당 filter 에 대한 전체 notification 개수
+    items: [NotificationGQL!]!
+}
+
+type Query {
+    # filter 가 없으면 이는 [READ_MARKED, READ_UNMARKED] 와 같음
+    # pageNumber : Start from 1
+    notificationsGet(filters: [FilterGQL!], pageSize: Int!, pageNumber: Int!): NotificationsResultGQL!
+}
+
+type Subscription {
+    # notification 이 create/update/consumable-pushed 되었을 때
+    notificationSub: NotificationGQL!
+}
+
+type Mutation {
+    # 읽음/읽지 않음 처리 함
+    notificationMarkRead(id: String!, markRead: Boolean): Boolean!
+}
