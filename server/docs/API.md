@@ -11,17 +11,52 @@ notification 을 발행합니다.
 **Request / Response Body**
 
 ```typescript
-interface RequestBody {
-    metadata: Record<string, any> // server side metadata
-    data: Record<string, any>
+interface PublishRequestBody {
+    /**
+     * 서버 측에만 저장되는 메타데이터
+     */
+    metadata: Record<string, any> | null
+    /**
+     * 프론트로 전달되는 Notification Data
+     */
+    data: Record<string, any> | null
+    /**
+     * 프론트로 전달되는 Notification Data
+     * DB 에 저장되지 않고 update 당시 활성화 된 Browser 에게만 전달한다.
+     * 빠르게 업데이트 되는 실시간 progress 등을 전달하기 위해 사용한다.
+     */
     consumableData: Record<string, any>
+    /**
+     * 암호화해서 전달해야 하는 경우에 publicKey 와 함께 전달한다.
+     */
     secureData: Record<string, any>
+    /**
+     * secureData 을 사용하는 경우에 JWK ECDH-ES 공개 키를 전달한다.
+     */
     publicKey: JWK_JSON_OBJECT // secure data 을 암호화하기 위한 public Key
+
+    recipients: Array<Recipient> // 수신자 목록
 }
 
-type ResponseCode = 201 | 200 | 400
+interface Recipient {
+    /**
+     * 전달 방식
+     * - notification : 브라우저(in-app) 노티
+     * - email : 이메일 전송
+     */
+    method: 'notification' | 'email'
+    
+    userId: string // 수신자 User ID
 
-interface ResponseBody {
+    email: string // method 가 email 인 경우, 수신자 이메일
+    locale: string // method 가 email 인 경우, 수신자 Locale (e.g. en-us / ko-kr)
+}
+
+// 200 : 성공
+// 400 : 잘못된 데이터 구조
+type ResponseCode = 200 | 400
+
+interface BasicResponseBody {
     message: String | undefined
 }
 ```
@@ -31,16 +66,32 @@ interface ResponseBody {
 notification 을 수정합니다.
 
 ```typescript
-interface RequestBody {
-    data: Record<string, any>
+interface PublishUpdateRequestBody {
+    /**
+     * 서버 측에만 저장되는 메타데이터
+     */
+    metadata: Record<string, any> | null
+    /**
+     * 프론트로 전달되는 Notification Data
+     */
+    data: Record<string, any> | null
+    /**
+     * 프론트로 전달되는 Notification Data
+     * DB 에 저장되지 않고 update 당시 활성화 된 Browser 에게만 전달한다.
+     * 빠르게 업데이트 되는 실시간 progress 등을 전달하기 위해 사용한다.
+     */
     consumableData: Record<string, any>
+    /**
+     * 암호화해서 전달해야 하는 경우에 publicKey 와 함께 전달한다.
+     */
     secureData: Record<string, any>
-    publicKey: JWK_JSON_OBJECT // secure data 을 암호화하기 위한 public Key
 }
 
-type ResponseCode = 201 | 200 | 400
-interface ResponseBody {
-    message: String | undefined;
+// 200 : 성공
+// 400 : 잘못된 데이터 구조
+type ResponseCode = 200 | 400
+
+interface BasicResponseBody {
+    message: String | undefined
 }
 ```
-
