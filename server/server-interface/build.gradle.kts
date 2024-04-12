@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     `java-library`
     `maven-publish`
@@ -11,18 +13,25 @@ repositories {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
     withJavadocJar()
     withSourcesJar()
 }
 
-tasks.withType<JavaCompile>() {
+tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
 }
 
+tasks.withType<KotlinCompile> {
+    kotlinOptions {
+        freeCompilerArgs += "-Xjsr305=strict"
+        jvmTarget = "11"
+    }
+}
+
 dependencies {
-    compileOnly("org.springframework.data:spring-data-mongodb:4.2.4")
+    compileOnly("org.springframework.data:spring-data-mongodb:3.4.18")
     compileOnly("io.github.openfeign:feign-core:13.2.1")
 
     implementation("com.fasterxml.jackson.core:jackson-annotations:2.17.0")
