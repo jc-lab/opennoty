@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Import
 
 @Configuration
 @EnableNotyServer
-@Import(NotyDefaultMongodbConfig::class)
 class NotyConfig {
     @Bean
     fun notyServer(builder: NotyServerBuilder): NotyServer {
