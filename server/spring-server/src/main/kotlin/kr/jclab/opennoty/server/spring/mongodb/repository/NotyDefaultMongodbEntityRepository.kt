@@ -4,10 +4,7 @@ import kr.jclab.opennoty.model.FilterGQL
 import kr.jclab.opennoty.model.NotificationsResultGQL
 import kr.jclab.opennoty.model.Recipient
 import kr.jclab.opennoty.server.authentication.UserAuthentication
-import kr.jclab.opennoty.server.entity.EntityRepository
-import kr.jclab.opennoty.server.entity.Notification
-import kr.jclab.opennoty.server.entity.NotificationWithData
-import kr.jclab.opennoty.server.entity.Publish
+import kr.jclab.opennoty.server.entity.*
 import kr.jclab.opennoty.server.spring.mongodb.entity.NotificationEntity
 import kr.jclab.opennoty.server.spring.mongodb.entity.PublishEntity
 import org.bson.types.ObjectId
@@ -70,7 +67,7 @@ class NotyDefaultMongodbEntityRepository(
         return notificationRepository.findNotificationWithData(tenantId, ObjectId(notificationId))
     }
 
-    override fun getPagedNotifications(userAuthentication: UserAuthentication, method: List<String>, filters: List<FilterGQL>?, dataFilters: Map<String, Any>?, pageSize: Int, pageNumber: Int): NotificationsResultGQL {
+    override fun getPagedNotifications(userAuthentication: UserAuthentication, method: List<String>, filters: List<FilterGQL>?, dataFilters: Map<String, Any>?, pageSize: Int, pageNumber: Int): NotificationsResult {
         return notificationRepository.getPagedNotifications(
             userAuthentication.tenantId,
             userAuthentication.userId,

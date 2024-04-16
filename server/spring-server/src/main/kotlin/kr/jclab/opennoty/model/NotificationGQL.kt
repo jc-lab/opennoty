@@ -2,7 +2,9 @@ package kr.jclab.opennoty.model
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
+import kr.jclab.opennoty.server.entity.Notification
 import kr.jclab.opennoty.server.entity.NotificationWithData
+import kr.jclab.opennoty.server.entity.Publish
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 class NotificationGQL(
@@ -21,12 +23,12 @@ class NotificationGQL(
     var secureData: String?,
 ) {
     companion object {
-        fun fromNotificationWithData(input: NotificationWithData, consumableData: Map<String, Any>? = null): NotificationGQL {
+        fun fromNotificationWithData(notification: Notification, publish: Publish, data: Map<String, Any>, consumableData: Map<String, Any>? = null): NotificationGQL {
             return NotificationGQL(
-                id = input.notificationId,
-                readMarked = input.readMarked,
-                data = input.publish.data,
-                secureData = input.publish.secureData,
+                id = notification.notificationId,
+                readMarked = notification.readMarked,
+                data = data,
+                secureData = publish.secureData,
                 consumableData = consumableData,
             )
         }

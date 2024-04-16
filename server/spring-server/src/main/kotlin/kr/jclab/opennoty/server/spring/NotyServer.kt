@@ -9,12 +9,14 @@ import kr.jclab.opennoty.server.entity.EntityRepository
 import kr.jclab.opennoty.server.entity.Notification
 import kr.jclab.opennoty.server.entity.Publish
 import kr.jclab.opennoty.server.natsmodel.NotificationUpdatedPayload
+import kr.jclab.opennoty.server.provider.NotificationDataFilterPerUser
 import org.springframework.mail.javamail.JavaMailSender
 
 class NotyServer(
     val natsConnection: Connection,
     val entityRepository: EntityRepository,
     val javaMailSender: JavaMailSender?,
+    private val notificationDataFilterPerUser: NotificationDataFilterPerUser?,
 ) {
     val objectMapper: ObjectMapper = jacksonObjectMapper()
 
@@ -32,5 +34,12 @@ class NotyServer(
 
     fun getNatsUserIdSubjectName(tenantId: String, userId: String, type: String): String {
         return "noty.${tenantId}.user.${userId}.${type}"
+    }
+
+    fun notificationDataFilterPerUser(notification: Notification, publish: Publish): Map<String, Any> {
+        if (this.notificationDataFilterPerUser != null) {
+            return this.notificationDataFilterPerUser.filter(notification, publish)
+        }
+        return publish.data
     }
 }

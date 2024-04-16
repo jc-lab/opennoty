@@ -3,6 +3,7 @@ package kr.jclab.opennoty.server.spring.mongodb.repository
 import kr.jclab.opennoty.model.FilterGQL
 import kr.jclab.opennoty.model.NotificationGQL
 import kr.jclab.opennoty.model.NotificationsResultGQL
+import kr.jclab.opennoty.server.entity.NotificationsResult
 import kr.jclab.opennoty.server.spring.mongodb.dto.NotificationDTO
 import kr.jclab.opennoty.server.spring.mongodb.entity.NotificationEntity
 import kr.jclab.opennoty.server.spring.mongodb.entity.PublishEntity
@@ -48,7 +49,7 @@ class NotificationCustomRepositoryImpl(
         dataFilters: Map<String, Any>?,
         pageSize: Int,
         pageNumber: Int,
-    ): NotificationsResultGQL {
+    ): NotificationsResult {
         var criteria = Criteria().andOperator(
             Criteria("tenantId").isEqualTo(tenantId),
             Criteria("recipient.userId").isEqualTo(userId),
@@ -103,17 +104,9 @@ class NotificationCustomRepositoryImpl(
         val countResult = mongoTemplate.aggregate(totalAggregation, CountResult::class.java)
         val pagedResult = mongoTemplate.aggregate(pagedAggregation, NotificationDTO::class.java)
 
-        return NotificationsResultGQL(
+        return NotificationsResult(
             totalCount = countResult.mappedResults.firstOrNull()?.count ?: 0,
-            items = pagedResult.mappedResults.map {
-                NotificationGQL(
-                    id = it.id.toHexString(),
-                    readMarked = it.readMarked,
-                    data = it.publish.data,
-                    secureData = it.publish.secureData,
-                    consumableData = null,
-                )
-            },
+            items = pagedResult.mappedResults,
         )
     }
 

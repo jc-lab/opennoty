@@ -53,7 +53,8 @@ class NotificationResolver(
                         tenantId = userAuthentication.tenantId,
                         notificationId = payload.notificationId,
                     )!!
-                    subscriber.onNext(NotificationGQL.fromNotificationWithData(notification, payload.consumableData))
+                    val data = notyServer.notificationDataFilterPerUser(notification, notification.publish)
+                    subscriber.onNext(NotificationGQL.fromNotificationWithData(notification, notification.publish, data, payload.consumableData))
                 }
 
                 subscriber.onSubscribe(object : Subscription {
