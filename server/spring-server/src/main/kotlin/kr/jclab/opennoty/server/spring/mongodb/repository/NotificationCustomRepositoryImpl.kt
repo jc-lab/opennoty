@@ -50,34 +50,33 @@ class NotificationCustomRepositoryImpl(
         pageSize: Int,
         pageNumber: Int,
     ): NotificationsResult {
-        var criteria = Criteria().andOperator(
-            Criteria("tenantId").isEqualTo(tenantId),
-            Criteria("recipient.userId").isEqualTo(userId),
-            Criteria("recipient.method").`in`(method),
-        )
+        val criteriaList = ArrayList<Criteria>()
+        criteriaList.add(Criteria("tenantId").isEqualTo(tenantId))
+        criteriaList.add(Criteria("recipient.userId").isEqualTo(userId))
+        criteriaList.add(Criteria("recipient.method").`in`(method))
 
         if (filters != null) {
             val readMarked = filters.contains(FilterGQL.READ_MARKED)
             val readUnmarked = filters.contains(FilterGQL.READ_UNMARKED)
             if (readMarked || readUnmarked) {
                 if (readMarked != readUnmarked) {
-                    criteria = criteria.and("readMarked").isEqualTo(readMarked)
+                    criteriaList.add(Criteria("readMarked").isEqualTo(readMarked))
                 }
             }
 
             val unsent = filters.contains(FilterGQL.UNSENT)
             if (unsent) {
-                criteria = criteria.and("sent").isEqualTo(false)
+                criteriaList.add(Criteria("sent").isEqualTo(false))
             }
         }
 
-        dataFilters?.forEach { k, v ->
-            criteria = criteria.and("data.${k}").isEqualTo(v)
+        dataFilters?.forEach { (k, v) ->
+            criteriaList.add(Criteria("data.${k}").isEqualTo(v))
         }
 
         val basicAggregation = Aggregation.newAggregation(
             NotificationEntity::class.java,
-            Aggregation.match(criteria),
+            Aggregation.match(Criteria().andOperator(criteriaList)),
             Aggregation.sort(Sort.by("_id").descending()),
         )
 
