@@ -11,6 +11,7 @@ class NotificationDTO(
     publishId: String,
     tenantId: String,
     readMarked: Boolean,
+    metadata: Map<String, Any>,
     recipient: Recipient,
     sent: Boolean,
     override var publish: PublishEntity,
@@ -19,6 +20,7 @@ class NotificationDTO(
     publishId = publishId,
     tenantId = tenantId,
     readMarked = readMarked,
+    metadata = metadata,
     recipient = recipient,
     sent = sent
 ), NotificationWithData

@@ -49,6 +49,7 @@ class NotyDefaultMongodbEntityRepository(
                 tenantId = publish.tenantId,
                 publishId = publish.id,
                 id = ObjectId.get(),
+                metadata = publish.metadata,
                 recipient = it,
             )
         }

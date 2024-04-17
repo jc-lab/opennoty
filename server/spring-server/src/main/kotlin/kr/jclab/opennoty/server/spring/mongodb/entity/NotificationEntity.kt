@@ -17,6 +17,8 @@ open class NotificationEntity(
     override var tenantId: String,
     @Field("readMarked")
     override var readMarked: Boolean = false,
+    @Field("metadata")
+    override var metadata: Map<String, Any>,
     @Field("recipient")
     override var recipient: Recipient,
     @Field("sent")

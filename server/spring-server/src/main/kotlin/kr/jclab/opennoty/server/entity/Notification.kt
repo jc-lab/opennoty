@@ -14,5 +14,6 @@ interface Notification : UserAwareEntity {
     val publishId: String
     var sent: Boolean
     var readMarked: Boolean
+    var metadata: Map<String, Any>
     var recipient: Recipient
 }
