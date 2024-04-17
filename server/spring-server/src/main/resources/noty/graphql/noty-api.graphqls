@@ -5,6 +5,7 @@ enum FlagFilter {
 
 type NotificationGQL {
     id: String!
+    timestamp: Long!
     readMarked: Boolean!
     data: JSON!
     consumableData: JSON

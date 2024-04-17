@@ -13,6 +13,11 @@ class NotificationGQL(
      */
     @JsonProperty("id")
     var id: String,
+    /**
+     * unix epoch time seconds
+     */
+    @JsonProperty("timestamp")
+    var timestamp: Long,
     @JsonProperty("readMarked")
     var readMarked: Boolean,
     @JsonProperty("data")
@@ -26,6 +31,7 @@ class NotificationGQL(
         fun fromNotificationWithData(notification: Notification, publish: Publish, data: Map<String, Any>, consumableData: Map<String, Any>? = null): NotificationGQL {
             return NotificationGQL(
                 id = notification.notificationId,
+                timestamp = notification.timestamp / 1000,
                 readMarked = notification.readMarked,
                 data = data,
                 secureData = publish.secureData,
