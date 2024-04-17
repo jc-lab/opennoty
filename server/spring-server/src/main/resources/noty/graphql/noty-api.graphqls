@@ -1,4 +1,4 @@
-enum FilterGQL {
+enum FlagFilter {
     READ_MARKED # 읽은 것만 가져오기
     READ_UNMARKED # 읽지 않은 것만 가져오기
 }
@@ -16,11 +16,16 @@ type NotificationsResultGQL {
     items: [NotificationGQL!]!
 }
 
+input NotificationFilters {
+    flags: [FlagFilter!]
+    data: JSON
+}
+
 type Query {
     # filter 가 없으면 이는 [READ_MARKED, READ_UNMARKED] 와 같음
     # pageNumber : Start from 1
     # dataFilters : e.g. '{"domain": "admin"}'. key is in "data"
-    notificationsGet(filters: [FilterGQL!], dataFilters: JSON, pageSize: Int!, pageNumber: Int!): NotificationsResultGQL!
+    notificationsGet(filters: NotificationFilters, pageSize: Int!, pageNumber: Int!): NotificationsResultGQL!
 }
 
 type Subscription {

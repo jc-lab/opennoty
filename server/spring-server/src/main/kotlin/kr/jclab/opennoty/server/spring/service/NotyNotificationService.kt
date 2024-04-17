@@ -1,9 +1,6 @@
 package kr.jclab.opennoty.server.spring.service
 
-import kr.jclab.opennoty.model.FilterGQL
-import kr.jclab.opennoty.model.NotificationGQL
-import kr.jclab.opennoty.model.NotificationsResultGQL
-import kr.jclab.opennoty.model.NotyMethod
+import kr.jclab.opennoty.model.*
 import kr.jclab.opennoty.server.authentication.UserAuthentication
 import kr.jclab.opennoty.server.entity.Notification
 import kr.jclab.opennoty.server.spring.NotyServer
@@ -16,12 +13,11 @@ class NotyNotificationService(
     fun getPagedNotifications(
         userAuthentication: UserAuthentication,
         method: List<NotyMethod>,
-        filters: List<FilterGQL>?,
-        dataFilters: Map<String, Any>?,
+        filters: NotificationFilters?,
         pageSize: Int,
         pageNumber: Int,
     ): NotificationsResultGQL {
-        val result = notyServer.entityRepository.getPagedNotifications(userAuthentication, method.map { it.value }, filters, dataFilters, pageSize, pageNumber)
+        val result = notyServer.entityRepository.getPagedNotifications(userAuthentication, method.map { it.value }, filters, pageSize, pageNumber)
         return NotificationsResultGQL(
             totalCount = result.totalCount,
             items = result.items.map {

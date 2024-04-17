@@ -1,8 +1,7 @@
 package kr.jclab.opennoty.server.spring.mongodb.repository
 
-import kr.jclab.opennoty.model.FilterGQL
-import kr.jclab.opennoty.model.NotificationGQL
-import kr.jclab.opennoty.model.NotificationsResultGQL
+import kr.jclab.opennoty.model.FlagFilter
+import kr.jclab.opennoty.model.NotificationFilters
 import kr.jclab.opennoty.server.entity.NotificationsResult
 import kr.jclab.opennoty.server.spring.mongodb.dto.NotificationDTO
 import kr.jclab.opennoty.server.spring.mongodb.entity.NotificationEntity
@@ -45,8 +44,7 @@ class NotificationCustomRepositoryImpl(
         tenantId: String,
         userId: String,
         method: List<String>,
-        filters: List<FilterGQL>?,
-        dataFilters: Map<String, Any>?,
+        filters: NotificationFilters?,
         pageSize: Int,
         pageNumber: Int,
     ): NotificationsResult {
@@ -55,23 +53,19 @@ class NotificationCustomRepositoryImpl(
         criteriaList.add(Criteria("recipient.userId").isEqualTo(userId))
         criteriaList.add(Criteria("recipient.method").`in`(method))
 
-        if (filters != null) {
-            val readMarked = filters.contains(FilterGQL.READ_MARKED)
-            val readUnmarked = filters.contains(FilterGQL.READ_UNMARKED)
+        if (filters?.flags != null) {
+            val readMarked = filters.flags.contains(FlagFilter.READ_MARKED)
+            val readUnmarked = filters.flags.contains(FlagFilter.READ_UNMARKED)
             if (readMarked || readUnmarked) {
                 if (readMarked != readUnmarked) {
                     criteriaList.add(Criteria("readMarked").isEqualTo(readMarked))
                 }
             }
 
-            val unsent = filters.contains(FilterGQL.UNSENT)
+            val unsent = filters.flags.contains(FlagFilter.UNSENT)
             if (unsent) {
                 criteriaList.add(Criteria("sent").isEqualTo(false))
             }
-        }
-
-        dataFilters?.forEach { (k, v) ->
-            criteriaList.add(Criteria("data.${k}").isEqualTo(v))
         }
 
         val basicAggregation = Aggregation.newAggregation(
@@ -80,18 +74,51 @@ class NotificationCustomRepositoryImpl(
             Aggregation.sort(Sort.by("_id").descending()),
         )
 
+        filters?.metadata
+            ?.map { (k, v) ->
+                Criteria("metadata.${k}").isEqualTo(v)
+            }
+            ?.let {
+                basicAggregation.pipeline.add(Aggregation.match(Criteria().andOperator(it)))
+            }
+
+        if (filters?.data?.isNotEmpty() == true) {
+            basicAggregation.pipeline.add(
+                Aggregation.lookup(
+                    PublishEntity.COLLECTION_NAME,
+                    "publishId",
+                    "_id",
+                    "publish"
+                )
+            )
+
+            filters.data
+                .map { (k, v) ->
+                    Criteria("data.${k}").isEqualTo(v)
+                }
+                .let {
+                    basicAggregation.pipeline.add(Aggregation.match(Criteria().andOperator(it)))
+                }
+        }
+
         val pagedAggregation = Aggregation.newAggregation(
             NotificationEntity::class.java,
             basicAggregation.pipeline.operations
         )
         pagedAggregation.pipeline.add(Aggregation.skip(((pageNumber - 1) * pageSize).toLong()))
         pagedAggregation.pipeline.add(Aggregation.limit(pageSize.toLong()))
-        pagedAggregation.pipeline.add(Aggregation.lookup(
-            PublishEntity.COLLECTION_NAME,
-            "publishId",
-            "_id",
-            "publish"
-        ))
+
+        if (filters?.data?.isNotEmpty() != true) {
+            pagedAggregation.pipeline.add(
+                Aggregation.lookup(
+                    PublishEntity.COLLECTION_NAME,
+                    "publishId",
+                    "_id",
+                    "publish"
+                )
+            )
+        }
+
         pagedAggregation.pipeline.add(Aggregation.unwind("publish"))
 
         val totalAggregation = Aggregation.newAggregation(

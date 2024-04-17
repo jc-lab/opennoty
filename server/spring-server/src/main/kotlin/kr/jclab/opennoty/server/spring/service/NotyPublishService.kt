@@ -70,11 +70,6 @@ open class NotyPublishService(
         var publish = notyServer.entityRepository.getPublish(tenantId, publishId) ?: return null
         var updated: Boolean = false
 
-        requestBody.metadata?.also {
-            updated = true
-
-            publish.metadata = it
-        }
         requestBody.data?.also {
             updated = true
 

@@ -1,7 +1,7 @@
 package kr.jclab.opennoty.server.spring.mongodb.repository
 
-import kr.jclab.opennoty.model.FilterGQL
-import kr.jclab.opennoty.model.NotificationsResultGQL
+import kr.jclab.opennoty.model.FlagFilter
+import kr.jclab.opennoty.model.NotificationFilters
 import kr.jclab.opennoty.model.Recipient
 import kr.jclab.opennoty.server.authentication.UserAuthentication
 import kr.jclab.opennoty.server.entity.*
@@ -67,13 +67,12 @@ class NotyDefaultMongodbEntityRepository(
         return notificationRepository.findNotificationWithData(tenantId, ObjectId(notificationId))
     }
 
-    override fun getPagedNotifications(userAuthentication: UserAuthentication, method: List<String>, filters: List<FilterGQL>?, dataFilters: Map<String, Any>?, pageSize: Int, pageNumber: Int): NotificationsResult {
+    override fun getPagedNotifications(userAuthentication: UserAuthentication, method: List<String>, filters: NotificationFilters?, pageSize: Int, pageNumber: Int): NotificationsResult {
         return notificationRepository.getPagedNotifications(
             userAuthentication.tenantId,
             userAuthentication.userId,
             method,
             filters,
-            dataFilters,
             pageSize,
             pageNumber
         )
