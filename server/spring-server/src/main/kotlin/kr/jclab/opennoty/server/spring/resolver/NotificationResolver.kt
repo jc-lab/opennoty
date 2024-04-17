@@ -60,7 +60,7 @@ class NotificationResolver(
                     }
 
                     override fun cancel() {
-                        natsSubscription.unsubscribe()
+                        notyServer.natsConnection.closeDispatcher(dispatcher)
                     }
                 })
             } catch (e: Exception) {
